@@ -1,0 +1,7 @@
+*.exe
+.vscode
+*.txt
+!copying.txt
+!CMakeLists.txt
+*.lnk
+build
