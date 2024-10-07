@@ -26,7 +26,7 @@ GLfloat deltaTime = 0.0f;
 GLfloat lastFrame = 0.0f;
 
 GLfloat playerspeedX = 0.8f;
-GLfloat playerspeedY = 2.0f;
+GLfloat playerspeedY = 0.8f;
 
 glm::vec2 currentMove = glm::vec2(playerspeedX, 0.0f);
 
@@ -52,10 +52,10 @@ bool checkCollision(Player& player, Planet& planet){
 
     bool result = false;
 
-    if ((playerPos.x < planetPos.x + planetData.size.x) &&
-    (playerPos.x + playerData.size.x > planetPos.x) &&
-    (playerPos.y < planetPos.y + planetData.size.y) &&
-    (playerPos.y + playerData.size.y > planetPos.y)) {
+    if ((playerPos.x < planetPos.x + (planetData.size.x - 0.15f)) &&
+    ((playerPos.x + playerData.size.x - 0.15f) > planetPos.x) &&
+    (playerPos.y < (planetPos.y + planetData.size.y - 0.15f)) &&
+    ((playerPos.y + playerData.size.y - 0.15f) > planetPos.y)) {
     result = true; // Collision detected
 }
     
@@ -190,12 +190,11 @@ std::shared_ptr<GameScene> loadGame(){
     std::cout << "player object pointer created" << std::endl;
 
     objBuilder.setPosition(glm::vec2(0.0f, 0.0f))
+              .setSize(glm::vec2(0.2f, 0.3f))
               .setTexture("../resources/textures/planet.png")
               .setRenderType(IMAGE_TYPE);
 
     std::shared_ptr<Planet> planet = static_pointer_cast<Planet>(objBuilder.buildElement("Planet"));
-
-    planet->resetPosition();
 
     GameContext->addElement("player", player);
     GameContext->addElement("planet", planet);
@@ -260,6 +259,13 @@ int main(){
     std::shared_ptr<Player> player = static_pointer_cast<Player>(GameContext->getElementByName("player"));
     std::shared_ptr<Planet> planet = static_pointer_cast<Planet>(GameContext->getElementByName("planet"));
 
+    Texture earth("../resources/textures/planet.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
+    Texture moon("../resources/textures/planet-1.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
+    Texture mars("../resources/textures/planet-2.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
+    Texture sun("../resources/textures/planet-3.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
+
+    Texture planets[4] = {earth, moon, mars, sun};
+
     while(!glfwWindowShouldClose(window)){
 
         float currentFrame = glfwGetTime();
@@ -271,7 +277,7 @@ int main(){
         player->move(currentMove * deltaTime);
 
         if(checkCollision((*player), (*planet))){
-            planet->resetPosition();
+            planet->resetPosition(planets, (*gameShader));
         }
 
         try{

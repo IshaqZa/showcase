@@ -63,7 +63,7 @@ class Planet : public GameObject {
         Planet(std::shared_ptr<std::vector<GLfloat>> vertices, GLuint* globalIndex, std::shared_ptr<Appearance2D> appearance, Shapes shape)
         : GameObject(vertices, globalIndex, appearance, shape){};
         
-        void resetPosition();
+        void resetPosition(Texture planets[4], Shader& shader);
 
         void draw(GLuint texBool) override;
         void setTexture(Texture texture, Shader& shader, const char* uniform, GLuint unit) override;

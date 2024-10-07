@@ -83,8 +83,17 @@ Appearance2D GameObject::getData(){
     return (*this->appearance);
 }
 
-void Planet::resetPosition(){
+void Planet::resetPosition(Texture planets[4], Shader& shader){
     
+
+    std::random_device planetrd;
+    std::mt19937 planetGen(planetrd());
+
+    std::uniform_int_distribution<> planetDistr(0, 4);
+    Texture planet = planets[planetDistr(planetGen)];
+
+    this->setTexture(planet, shader, "tex", 0);
+
     model = glm::mat4(1.0f);
     std::random_device rd;
     std::mt19937 gen(rd());
