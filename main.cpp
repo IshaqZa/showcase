@@ -25,8 +25,8 @@ using namespace std;
 GLfloat deltaTime = 0.0f;
 GLfloat lastFrame = 0.0f;
 
-GLfloat playerspeedX = 0.4f;
-GLfloat playerspeedY = 1.0f;
+GLfloat playerspeedX = 0.8f;
+GLfloat playerspeedY = 2.0f;
 
 glm::vec2 currentMove = glm::vec2(playerspeedX, 0.0f);
 
@@ -42,8 +42,39 @@ void errorCallback(int error, const char* description) {
     fprintf(stderr, "GLFW Error %d: %s\n", error, description);
 }
 
+bool checkCollision(Player& player, Planet& planet){
+
+    Appearance2D playerData = player.getData();
+    glm::vec2 playerPos = player.getPosition();
+
+    Appearance2D planetData = planet.getData();
+    glm::vec2 planetPos = planet.getPosition();
+
+    bool result = false;
+
+    if ((playerPos.x < planetPos.x + planetData.size.x) &&
+    (playerPos.x + playerData.size.x > planetPos.x) &&
+    (playerPos.y < planetPos.y + planetData.size.y) &&
+    (playerPos.y + playerData.size.y > planetPos.y)) {
+    result = true; // Collision detected
+}
+    
+    if(result){
+        std::cout << "collision detected:" << std::endl;
+        std::cout << "Player data:" << std::endl;
+        std::cout << "Position(" << playerPos.x << ", " << playerPos.y << ")" << std::endl;
+        std::cout << "Size(" << playerData.size.x << ", " << playerData.size.y << ")" << std::endl;
+        std::cout << "Planet data:" << std::endl;
+        std::cout << "Position(" << planetPos.x << ", " << planetPos.y << ")" << std::endl;
+        std::cout << "Size(" << planetData.size.x << ", " << planetData.size.y << ")" << std::endl;
+    }
+    
+    return result;
+
+}
+
 void userInput(GLFWwindow* window, Player player){
-    // currentMove = glm::vec2(0.0f, 0.0f);
+    currentMove = glm::vec2(0.0f, 0.0f);
 
     // Check each key and add corresponding movement
     if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS){
@@ -138,14 +169,15 @@ std::shared_ptr<Scene2D> loadMainMenu(){
 std::shared_ptr<GameScene> loadGame(){
     UIFactory* factory = UIFactory::getInstance();
     factory->addType("Player", Player::create);
+    factory->addType("Planet", Planet::create);
 
     std::shared_ptr<GameScene> GameContext = std::make_shared<GameScene>();
 
     GameContext->createShader("../resources/Shaders/default.vert", "../resources/Shaders/default.frag");
 
-    UIBuilder playerBuilder(GameContext);
+    UIBuilder objBuilder(GameContext);
 
-    playerBuilder.setPosition(glm::vec2(0.0f, 0.0f))
+    objBuilder.setPosition(glm::vec2(0.0f, 0.0f))
                  .setColor(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f))
                  .setSize(glm::vec2(0.2f, 0.25f))
                  .setRenderType(IMAGE_TYPE)
@@ -154,10 +186,19 @@ std::shared_ptr<GameScene> loadGame(){
 
     std::cout << "player object data set" << std::endl;
 
-    std::shared_ptr<Player> player = static_pointer_cast<Player>(playerBuilder.buildElement("Player"));
+    std::shared_ptr<Player> player = static_pointer_cast<Player>(objBuilder.buildElement("Player"));
     std::cout << "player object pointer created" << std::endl;
 
+    objBuilder.setPosition(glm::vec2(0.0f, 0.0f))
+              .setTexture("../resources/textures/planet.png")
+              .setRenderType(IMAGE_TYPE);
+
+    std::shared_ptr<Planet> planet = static_pointer_cast<Planet>(objBuilder.buildElement("Planet"));
+
+    planet->resetPosition();
+
     GameContext->addElement("player", player);
+    GameContext->addElement("planet", planet);
 
     GameContext->setBackgroundImage(true);
     Texture tex("../resources/textures/space.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
@@ -217,6 +258,7 @@ int main(){
     GLuint transMat = glGetUniformLocation(gameShader->ID, "transform");
 
     std::shared_ptr<Player> player = static_pointer_cast<Player>(GameContext->getElementByName("player"));
+    std::shared_ptr<Planet> planet = static_pointer_cast<Planet>(GameContext->getElementByName("planet"));
 
     while(!glfwWindowShouldClose(window)){
 
@@ -226,9 +268,11 @@ int main(){
 
         glUniformMatrix4fv(transMat, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
 
-        
-
         player->move(currentMove * deltaTime);
+
+        if(checkCollision((*player), (*planet))){
+            planet->resetPosition();
+        }
 
         try{
             std::cout << "starting scene update using scene manager" << std::endl;
