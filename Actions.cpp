@@ -97,4 +97,67 @@ void actions::quitOnHoverLeave(){
     btn->setTexture(tex, (*currShader), "tex", 0);
 }
 
-void actions::empty(){}
+void actions::mainMenuOnHoverEnter(){
+    std::unordered_map<std::string, std::shared_ptr<Scene>> scenes = sceneManager->getAllScenes();
+
+    if(scenes.empty()) std::cout << "Scenes is empty" << std::endl;
+    std::shared_ptr<Scene2D> scene = std::static_pointer_cast<Scene2D>(scenes["Game Over"]);
+
+    std::shared_ptr<Shader> currShader = scene->getShaderProgram();
+    std::cout << "Returned active shader" << std::endl;
+    std::shared_ptr<MenuElement> btn = scene->getElementByName("mainmenu");
+
+    Texture tex("../resources/textures/mainmenutext-hover.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
+    btn->setTexture(tex, (*currShader), "tex", 0);
+}
+
+void actions::mainMenuOnHoverLeave(){
+    std::unordered_map<std::string, std::shared_ptr<Scene>> scenes = sceneManager->getAllScenes();
+
+    if(scenes.empty()) std::cout << "Scenes is empty" << std::endl;
+    std::shared_ptr<Scene2D> scene = std::static_pointer_cast<Scene2D>(scenes["Game Over"]);
+
+    std::shared_ptr<Shader> currShader = scene->getShaderProgram();
+    std::cout << "Returned active shader" << std::endl;
+    std::shared_ptr<MenuElement> btn = scene->getElementByName("mainmenu");
+
+    Texture tex("../resources/textures/mainmenutext.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
+    btn->setTexture(tex, (*currShader), "tex", 0);
+}
+
+void actions::mainMenuOnClick(){
+    sceneManager->switchCurrentScene("Main Menu");
+}
+
+
+void actions::retryOnHoverEnter(){
+    std::unordered_map<std::string, std::shared_ptr<Scene>> scenes = sceneManager->getAllScenes();
+
+    if(scenes.empty()) std::cout << "Scenes is empty" << std::endl;
+    std::shared_ptr<Scene2D> scene = std::static_pointer_cast<Scene2D>(scenes["Game Over"]);
+
+    std::shared_ptr<Shader> currShader = scene->getShaderProgram();
+    std::cout << "Returned active shader" << std::endl;
+    std::shared_ptr<MenuElement> btn = scene->getElementByName("retry");
+
+    Texture tex("../resources/textures/retry-hover.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
+    btn->setTexture(tex, (*currShader), "tex", 0);
+}
+
+void actions::retryOnHoverLeave(){
+    std::unordered_map<std::string, std::shared_ptr<Scene>> scenes = sceneManager->getAllScenes();
+
+    if(scenes.empty()) std::cout << "Scenes is empty" << std::endl;
+    std::shared_ptr<Scene2D> scene = std::static_pointer_cast<Scene2D>(scenes["Game Over"]);
+
+    std::shared_ptr<Shader> currShader = scene->getShaderProgram();
+    std::cout << "Returned active shader" << std::endl;
+    std::shared_ptr<MenuElement> btn = scene->getElementByName("retry");
+
+    Texture tex("../resources/textures/retry.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_UNSIGNED_BYTE);
+    btn->setTexture(tex, (*currShader), "tex", 0);
+}
+
+void actions::retryOnClick(){
+    sceneManager->switchCurrentScene("Game");
+}

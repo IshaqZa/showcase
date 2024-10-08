@@ -15,6 +15,11 @@ namespace actions{
     void settingsOnHoverLeave();
     void quitOnHoverEnter();
     void quitOnHoverLeave();
-    void empty();
+    void mainMenuOnHoverEnter();
+    void mainMenuOnHoverLeave();
+    void mainMenuOnClick();
+    void retryOnHoverEnter();
+    void retryOnHoverLeave();
+    void retryOnClick();
 }
 #endif

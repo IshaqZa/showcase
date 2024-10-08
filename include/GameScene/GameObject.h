@@ -52,8 +52,11 @@ class Player : public GameObject {
         void setTexture(Texture texture, Shader& shader, const char* uniform, GLuint unit) override;
         static std::shared_ptr<MenuElement> create(std::shared_ptr<std::vector<GLfloat>> vertices, GLuint* globalIndex, std::shared_ptr<Appearance2D> appearance, Shapes shape);
 
-        
+        void snap(int x, int y);
+
         void update(Shader& shader) override;
+
+        void reset();
 };
 
 class Planet : public GameObject {
@@ -73,9 +76,24 @@ class Planet : public GameObject {
 
 };
 
-// class HealthBar : public GameObject {
-//     HealthBar(std::shared_ptr<std::vector<GLfloat>> vertices, GLuint* globalIndex, std::shared_ptr<Appearance2D> appearance, Shapes shape)
-//         : GameObject(vertices, globalIndex, appearance, shape){}
-// };
+class HealthBar : public GameObject {
+
+    private:
+        GLfloat health = 1.0f;
+        GLfloat deathRate = 0.2f;
+
+    public:
+        HealthBar(std::shared_ptr<std::vector<GLfloat>> vertices, GLuint* globalIndex, std::shared_ptr<Appearance2D> appearance, Shapes shape)
+            : GameObject(vertices, globalIndex, appearance, shape){}
+
+        void draw(GLuint texBool) override;
+        void setTexture(Texture texture, Shader& shader, const char* uniform, GLuint unit) override;
+        void update(Shader& shader) override;
+
+        GLfloat drain(GLfloat deltaTime);
+        void reset();
+
+        static std::shared_ptr<MenuElement> create(std::shared_ptr<std::vector<GLfloat>> vertices, GLuint* globalIndex, std::shared_ptr<Appearance2D> appearance, Shapes shape);
+};
 
 #endif
